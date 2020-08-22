@@ -5,6 +5,7 @@ namespace Simple\Helpers;
 use Exception;
 use \PDO;
 
+if(!defined('DB_CONFIG')) define('DB_CONFIG', '../config/database.php');
 class DB
 {
     /**
