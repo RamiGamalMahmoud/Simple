@@ -43,10 +43,10 @@ class DB
      * @param stirng $table the table name
      * @return array
      */
-    public function getFields(string $table)
+    public function fetchColumnsInTable(string $table)
     {
         $this->query = 'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = "' . $table . '"';
-        $columns = $this->get();
+        $columns = $this->fetch();
         $reault = [];
         foreach ($columns as $column) {
             foreach ($column as $key => $value) {
@@ -83,7 +83,7 @@ class DB
      * @param void
      * @return array $data
      */
-    public function get()
+    public function fetch()
     {
         $stmt = $this->execute();
 
@@ -98,7 +98,7 @@ class DB
      * @param void
      * @return array|bool
      */
-    public function getFirst()
+    public function fetchFirst()
     {
         $stmt = $this->execute();
 
