@@ -1,0 +1,14 @@
+{
+    "name": "rami/simple",
+    "description": "A simple routing system with query builder",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Rami Gamal",
+            "email": "rami.gamal.mahmoud@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
