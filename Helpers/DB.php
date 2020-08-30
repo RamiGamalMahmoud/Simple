@@ -5,7 +5,7 @@ namespace Simple\Helpers;
 use Exception;
 use \PDO;
 
-if(!defined('DB_CONFIG')) define('DB_CONFIG', '../config/database.php');
+if(!defined('DB_CONFIG')) define('DB_CONFIG', dirname(__DIR__)  . '/config/database.php');
 class DB
 {
     /**
@@ -106,6 +106,18 @@ class DB
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         return false;
+    }
+
+    /**
+     * Fetch Object
+     */
+    public function fetchObject($class)
+    {
+        $stmt = $this->execute();
+
+        if( $stmt->rowCount() > 0){
+            return $stmt->fetchAll(PDO::FETCH_CLASS, $class);
+        }
     }
 
     /**
@@ -313,11 +325,15 @@ class DB
     {
         $this->query .= 'VALUES ( ';
 
-        $items = count($values);
-        for ($i = 0; $i < $items; $i++) {
+        foreach($values as $key => $value){
             $this->query .= '?, ';
-            $this->queryParams[] = $values[$i];
+            $this->queryParams[] = $value;
         }
+        // $items = count($values);
+        // for ($i = 0; $i < $items; $i++) {
+        //     $this->query .= '?, ';
+        //     $this->queryParams[] = $values[$i];
+        // }
         $this->query = trim($this->query, ', ') . ' ) ';
         return $this;
     }

@@ -2,7 +2,7 @@
 
 namespace Simple\Core;
 
-class Request
+class Request implements IRequest
 {
     private $path;
     private $requestMethod;
@@ -56,6 +56,10 @@ class Request
         return $this->urlSegmant[$index];
     }
 
+    public function getSegments()
+    {
+        return $this->urlSegmant;
+    }
     /**
      * return the parameters in the request method
      * @param void
@@ -83,6 +87,13 @@ class Request
         }
 
         return $this->body;
+    }
+
+    public function getAjaxData()
+    {
+        $data = file_get_contents('php://input');
+        $data = json_decode($data);        
+        return $data;
     }
 
     public function getPath()
