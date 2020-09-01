@@ -4,16 +4,15 @@ namespace Simple\Core;
 
 use Exception;
 
-include WEB_ROUTES;
-
 class Router
 {
     private array $routes = [];
     private $path;
     private $method;
 
-    public function __construct(string $path, string $method)
+    public function __construct(string $path, string $method, string $configDir)
     {
+        include $this->getRoutesFile($configDir);
         $this->path = $path;
         $this->method = $method;
         $this->routes = Route::getRoutes();
@@ -22,6 +21,21 @@ class Router
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    public function getRoutesFile( string $configDir)
+    {
+        $host = $_SERVER['HTTP_HOST'];
+        $prefex = explode('.', $host)[0];
+        $routesFile = '';
+
+        if($prefex === 'www') {
+            $routesFile = 'web.php';
+        } elseif ($prefex === 'api') {
+            $routesFile = 'api.php';
+        }
+        $routesFile = $configDir . DIRECTORY_SEPARATOR . $routesFile;
+        return $routesFile;
     }
 
     private function pathToRegex($path)

@@ -8,10 +8,10 @@ class Simple
     private Router $router;
     private Request $request;
 
-    public function __construct()
+    public function __construct(string $configDir)
     {
         $this->request = new Request();
-        $this->router = new Router($this->request->getPath(), $this->request->getRequestMethod());
+        $this->router = new Router($this->request->getPath(), $this->request->getRequestMethod(), $configDir);
     }
 
     public function run()
