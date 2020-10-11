@@ -11,14 +11,6 @@ class Router
     private $method;
     private IRequest $request;
 
-    // public function __construct(string $path, string $method, string $configDir)
-    // {
-    //     include $this->getRoutesFile($configDir);
-    //     $this->path = $path;
-    //     $this->method = $method;
-    //     $this->routes = Route::getRoutes();
-    // }
-
     public function __construct(IRequest $request, string $configDir)
     {
         include $this->getRoutesFile($configDir);
