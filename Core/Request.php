@@ -6,6 +6,7 @@ class Request implements IRequest
 {
     private $path;
     private $requestMethod;
+    private $requestType;
     private array $urlSegmant;
     private array $body = [];
 
@@ -21,7 +22,8 @@ class Request implements IRequest
         }
 
         $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
-        $this->parsePath();
+        $result = $this->parsePath();
+        $this->requestType = $this->getRequestType($_SERVER['HTTP_HOST']);
     }
 
     /**
@@ -44,6 +46,25 @@ class Request implements IRequest
         $this->urlSegmant = explode('/', $path);
 
         $this->path = $path;
+
+        $urlSegmant = $this->urlSegmant;
+
+        $_path = $this->path;
+        $result = [$_path, $urlSegmant];
+        return $result;
+    }
+
+    private function getRequestType(string $host)
+    {
+        $host = $_SERVER['HTTP_HOST'];
+        $prefex = explode('.', $host)[0];
+        if ($prefex === 'www') {
+            return 'web';
+        } else if ($prefex === 'api') {
+            return 'api';
+        } else {
+            throw new \Exception('Unknown request type use [www] or [api]');
+        }
     }
 
     public function getSegment(int $index)

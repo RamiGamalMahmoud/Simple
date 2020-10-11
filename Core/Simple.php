@@ -11,7 +11,7 @@ class Simple
     public function __construct(string $configDir)
     {
         $this->request = new Request();
-        $this->router = new Router($this->request->getPath(), $this->request->getRequestMethod(), $configDir);
+        $this->router = new Router($this->request, $configDir);
     }
 
     public function run()

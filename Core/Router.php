@@ -9,12 +9,22 @@ class Router
     private array $routes = [];
     private $path;
     private $method;
+    private IRequest $request;
 
-    public function __construct(string $path, string $method, string $configDir)
+    // public function __construct(string $path, string $method, string $configDir)
+    // {
+    //     include $this->getRoutesFile($configDir);
+    //     $this->path = $path;
+    //     $this->method = $method;
+    //     $this->routes = Route::getRoutes();
+    // }
+
+    public function __construct(IRequest $request, string $configDir)
     {
         include $this->getRoutesFile($configDir);
-        $this->path = $path;
-        $this->method = $method;
+        $this->request = $request;
+        $this->path = $this->request->getPath();
+        $this->method = $this->request->getRequestMethod();
         $this->routes = Route::getRoutes();
     }
 
