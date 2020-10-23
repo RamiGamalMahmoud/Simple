@@ -5,7 +5,7 @@ namespace Simple\Helpers;
 use Exception;
 use \PDO;
 
-if(!defined('DB_CONFIG')) define('DB_CONFIG', dirname(__DIR__)  . '/config/database.php');
+if (!defined('DB_CONFIG')) define('DB_CONFIG', dirname(__DIR__)  . '/config/database.php');
 class DB
 {
     /**
@@ -47,7 +47,7 @@ class DB
     {
         $this->query = 'SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.columns WHERE TABLE_NAME = "' . $table . '"';
         $columns = $this->fetch();
-        $reault = [];
+        $result = [];
         foreach ($columns as $column) {
             foreach ($column as $key => $value) {
                 $result[] = $value;
@@ -115,7 +115,7 @@ class DB
     {
         $stmt = $this->execute();
 
-        if( $stmt->rowCount() > 0){
+        if ($stmt->rowCount() > 0) {
             return $stmt->fetchAll(PDO::FETCH_CLASS, $class);
         }
     }
@@ -325,7 +325,7 @@ class DB
     {
         $this->query .= 'VALUES ( ';
 
-        foreach($values as $key => $value){
+        foreach ($values as $key => $value) {
             $this->query .= '?, ';
             $this->queryParams[] = $value;
         }

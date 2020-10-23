@@ -11,4 +11,5 @@ interface IRequest
     function getAjaxData();
     function getPath();
     function getRequestMethod();
+    function getRequestType();
 }

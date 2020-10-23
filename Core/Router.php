@@ -13,10 +13,10 @@ class Router
 
     public function __construct(IRequest $request, string $configDir)
     {
-        include $this->getRoutesFile($configDir);
         $this->request = $request;
         $this->path = $this->request->getPath();
         $this->method = $this->request->getRequestMethod();
+        include $this->getRoutesFile($configDir);
         $this->routes = Route::getRoutes();
     }
 
@@ -25,19 +25,10 @@ class Router
         return $this->routes;
     }
 
-    public function getRoutesFile( string $configDir)
+    public function getRoutesFile(string $configDir)
     {
-        $host = $_SERVER['HTTP_HOST'];
-        $prefex = explode('.', $host)[0];
-        $routesFile = '';
-
-        if($prefex === 'www') {
-            $routesFile = 'web.php';
-        } elseif ($prefex === 'api') {
-            $routesFile = 'api.php';
-        }
-        $routesFile = $configDir . DIRECTORY_SEPARATOR . $routesFile;
-        return $routesFile;
+        $requestType = $this->request->getRequestType();
+        return $configDir . DIRECTORY_SEPARATOR . $requestType . '.php';
     }
 
     private function pathToRegex($path)
@@ -62,15 +53,14 @@ class Router
 
     public function route($path = '', $method = '')
     {
-        $path = empty($path) ? $this->path : $path;
-        $method = empty($method) ? $this->method : $method;
+        $_path = $path;
+        $_method = $method;
+        $_path = empty($_path) ? $this->path : $_path;
+        $_method = empty($_method) ? $this->method : $_method;
 
-        foreach ($this->routes[$method] as $key => $value) {
-
-            $key = $this->pathToRegex($key);
-
-            if (preg_match($key, $path)) {
-
+        foreach ($this->routes[$_method] as $key => $value) {
+            $_key = $this->pathToRegex($key);
+            if (preg_match($_key, $_path)) {
                 return $value;
             }
         }
