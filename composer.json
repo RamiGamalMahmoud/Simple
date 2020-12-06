@@ -1,24 +1,24 @@
 {
-    "name": "rami/simple",
-    "description": "A simple routing system with query builder",
-    "type": "library",
-    "license": "GPL",
-    "authors": [
-        {
-            "name": "rami-gamal",
-            "email": "rami.gamal.mahmoud@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "Simple\\Core\\": "Core/",
-            "Simple\\Helpers\\": "Helpers/",
-            "Test\\": "test/"
-        }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.4@dev"
+  "name": "rami/simple",
+  "description": "A simple routing system with query builder",
+  "type": "library",
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "rami-gamal",
+      "email": "rami.gamal.mahmoud@gmail.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Simple\\Core\\": "Core/",
+      "Simple\\Helpers\\": "Helpers/",
+      "Test\\": "test/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.4@dev"
+  }
 }
