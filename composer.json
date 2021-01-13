@@ -1,21 +1,24 @@
 {
   "name": "rami-gamal/simple",
-  "description": "A simple routing system with query builder",
+  "description": "A simple package for runnig php applications including routing system and sql query builder",
   "type": "library",
-  "license": "GPL",
+  "license": "MIT",
   "authors": [
     {
       "name": "rami-gamal",
-      "email": "rami.gamal.mahmoud@gmail.com"
+      "email": "rami.gamal.mahmoud@gmail.com",
+      "role": "Developer"
     }
   ],
   "minimum-stability": "dev",
-  "require": {},
+  "require": {
+    "php": ">=7.4",
+    "twig/twig": "3.x-dev"
+  },
   "autoload": {
     "psr-4": {
       "Simple\\Core\\": "Core/",
-      "Simple\\Helpers\\": "Helpers/",
-      "Test\\": "test/"
+      "Simple\\Helpers\\": "Helpers/"
     }
   },
   "require-dev": {
