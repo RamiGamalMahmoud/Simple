@@ -58,13 +58,7 @@ class Request implements IRequest
   {
     $host = $_SERVER['HTTP_HOST'];
     $prefex = explode('.', $host)[0];
-    if ($prefex === 'www') {
-      return 'web';
-    } else if ($prefex === 'api') {
-      return 'api';
-    } else {
-      throw new \Exception('Unknown request type use [www] or [api]');
-    }
+    return $prefex === 'api' ? 'api' : 'web';
   }
 
   public function getRequestType()
