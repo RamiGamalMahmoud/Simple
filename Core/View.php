@@ -10,10 +10,10 @@ class View
   private static FilesystemLoader $loader;
   private static Environment $twig;
 
-  public static function init()
+  public static function init(string $viewsPath, string $compilePath, bool $viewsAutoReload = false)
   {
-    self::$loader = new \Twig\Loader\FilesystemLoader(VIEWS_PATH);
-    self::$twig = new \Twig\Environment(self::$loader, ['cache' => COMPILE_PATH, 'auto_reload' => VIEWS_AUTO_RELOAD]);
+    self::$loader = new \Twig\Loader\FilesystemLoader($viewsPath);
+    self::$twig = new \Twig\Environment(self::$loader, ['cache' => $compilePath, 'auto_reload' => $viewsAutoReload]);
     self::$twig->addExtension(new \Twig\Extension\StringLoaderExtension());
   }
   public static function render(string $template, array $context = [])
@@ -26,5 +26,3 @@ class View
     return self::$twig->render($template, $context);
   }
 }
-
-View::init();
