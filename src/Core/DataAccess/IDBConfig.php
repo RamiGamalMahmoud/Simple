@@ -4,9 +4,9 @@ namespace Simple\Core\DataAccess;
 
 interface IDBConfig
 {
-    static function getConnectionString(): string;
-    static function getUserName(): string;
-    static function getPassword(): string;
-    static function getPort(): int;
-    static function getOptinos(): array;
+    function getConnectionString(): string;
+    function getUserName(): string;
+    function getPassword(): string;
+    function getPort(): int;
+    function getOptinos(): array;
 }

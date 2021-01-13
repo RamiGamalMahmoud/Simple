@@ -8,7 +8,7 @@ abstract class BaseDataAccess implements IDataAccess
 
     public function __construct(IDBConfig $dBConfig)
     {
-        $this->connect($dBConfig::getConnectionString(), $dBConfig::getUserName(), $dBConfig::getPassword(), $dBConfig::getOptinos());
+        $this->connect($dBConfig->getConnectionString(), $dBConfig->getUserName(), $dBConfig->getPassword(), $dBConfig->getOptinos());
     }
 
     protected function connect(string $dsn, string $userName, string $password, array $options = [])
