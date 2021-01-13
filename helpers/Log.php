@@ -2,7 +2,7 @@
 
 namespace Simple\Helpers;
 
-class Functions
+class Log
 {
     public static function dump($object)
     {
