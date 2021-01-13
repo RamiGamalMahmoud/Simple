@@ -1,5 +1,5 @@
 {
-  "name": "rami/simple",
+  "name": "rami-gamal/simple",
   "description": "A simple routing system with query builder",
   "type": "library",
   "license": "GPL",
