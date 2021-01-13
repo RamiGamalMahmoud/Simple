@@ -75,7 +75,7 @@ class Request implements IRequest
   public function getSegment(int $index)
   {
     $segments = count($this->urlSegmant);
-    if ($segments = 0 || $index > $segments) {
+    if ($segments == 0 || $index > $segments) {
       return false;
     }
 
