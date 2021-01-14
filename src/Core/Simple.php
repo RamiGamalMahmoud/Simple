@@ -2,43 +2,70 @@
 
 namespace Simple\Core;
 
+use Exception;
+use Simple\Exceptions\RoutingException;
 
 class Simple
 {
-    private Router $router;
-    private Request $request;
+    private static Router $router;
+    private static Request $request;
+    private static string $configDir;
 
-    public function __construct(string $configDir)
+    public static function init(string $configDir)
     {
-        $this->request = new Request();
-        $this->router = new Router($this->request, $configDir);
+        self::$configDir = $configDir;
+        self::$request = new Request();
+        self::$router = new Router(self::$request, $configDir);
     }
 
-    public function run()
+    public static function run()
     {
-        $route = $this->router->route();
-        if ($route !== false) {
+        $route = self::$router->route();
+        if ($route) {
             $routePath = $route['route'];
             $middlewares = $route['middlewares'];
             if ($middlewares !== null) {
-                if ($this->runMiddleWares($middlewares)) {
-                    Dispatcher::dispatche($routePath, $this->request);
+                if (self::runMiddleWares($middlewares)) {
+                    Dispatcher::dispatche($routePath, self::$request);
                 } else {
-                    header('location: /login');
+                    throw new Exception('Middle Wares Failed');
                 }
             } else {
-                Dispatcher::dispatche($routePath, $this->request);
+                Dispatcher::dispatche($routePath, self::$request);
             }
         } else {
-            header('location: /error');
+            throw new RoutingException('Route Not Found');
         }
     }
 
-    private function runMiddleWares(array $middlewares)
+    public static function reRun(string $path = '', array $params = null)
+    {
+        $request = new Request($path);
+        $router = new Router($request, self::$configDir);
+        $route = $router->route();
+
+        if ($route) {
+            $routePath = $route['route'];
+            $middlewares = $route['middlewares'];
+            if ($middlewares !== null) {
+                if (self::runMiddleWares($middlewares)) {
+                    return Dispatcher::dispatche($routePath, $request, $params);
+                } else {
+                    throw new Exception('Middle Wares Failed');
+                }
+            } else {
+                return Dispatcher::dispatche($routePath, $request, $params);
+            }
+        } else {
+            throw new RoutingException('Route Not Found');
+        }
+    }
+
+    private static function runMiddleWares(array $middlewares)
     {
         foreach ($middlewares as $middleware) {
 
-            if (!Dispatcher::dispatche($this->router->route($middleware, 'middlewares'), $this->request)) {
+            if (!Dispatcher::dispatche(self::$router->route($middleware, 'middlewares'), self::$request)) {
                 return false;
             }
         }

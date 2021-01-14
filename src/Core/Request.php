@@ -13,16 +13,10 @@ class Request implements IRequest
     /**
      * construct the object
      */
-    public function __construct($path = '')
+    public function __construct($path = null)
     {
-        if (empty($path)) {
-            $this->path = trim($_SERVER['REQUEST_URI'], '/');
-        } else {
-            $this->path = $path;
-        }
-
         $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
-        $result = $this->parsePath();
+        $this->parsePath($path);
         $this->requestType = $this->parseRequestType();
     }
 
@@ -31,9 +25,9 @@ class Request implements IRequest
      * @param string $path: the path to be parsed
      * @return void
      */
-    private function parsePath()
+    private function parsePath(string $path = null)
     {
-        $path = $this->path;
+        $path = $path ?? trim($_SERVER['REQUEST_URI'], '/');
 
         $pos = strpos($path, '?');
         if ($pos !== false) {
@@ -46,12 +40,6 @@ class Request implements IRequest
         $this->urlSegmant = explode('/', $path);
 
         $this->path = $path;
-
-        $urlSegmant = $this->urlSegmant;
-
-        $_path = $this->path;
-        $result = [$_path, $urlSegmant];
-        return $result;
     }
 
     private function parseRequestType()
@@ -94,9 +82,7 @@ class Request implements IRequest
                     FILTER_SANITIZE_SPECIAL_CHARS
                 );
             }
-        }
-
-        if ($this->requestMethod === 'post') {
+        } elseif ($this->requestMethod === 'post') {
             foreach ($_POST as $key => $value) {
                 $this->body[$this->requestMethod][$key] = filter_input(
                     INPUT_POST,
