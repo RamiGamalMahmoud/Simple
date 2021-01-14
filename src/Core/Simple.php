@@ -7,38 +7,19 @@ use Simple\Exceptions\RoutingException;
 
 class Simple
 {
-    private static Router $router;
-    private static Request $request;
     private static string $configDir;
 
     public static function init(string $configDir)
     {
         self::$configDir = $configDir;
-        self::$request = new Request();
-        self::$router = new Router(self::$request, $configDir);
     }
 
     public static function run()
     {
-        $route = self::$router->route();
-        if ($route) {
-            $routePath = $route['route'];
-            $middlewares = $route['middlewares'];
-            if ($middlewares !== null) {
-                if (self::runMiddleWares($middlewares)) {
-                    Dispatcher::dispatche($routePath, self::$request);
-                } else {
-                    throw new Exception('Middle Wares Failed');
-                }
-            } else {
-                Dispatcher::dispatche($routePath, self::$request);
-            }
-        } else {
-            throw new RoutingException('Route Not Found');
-        }
+        self::resolve();
     }
 
-    public static function reRun(string $path = '', array $params = null)
+    public static function resolve(string $path = null, array $params = null)
     {
         $request = new Request($path);
         $router = new Router($request, self::$configDir);
@@ -48,7 +29,7 @@ class Simple
             $routePath = $route['route'];
             $middlewares = $route['middlewares'];
             if ($middlewares !== null) {
-                if (self::runMiddleWares($middlewares)) {
+                if (self::runMiddleWares($middlewares, $router, $request)) {
                     return Dispatcher::dispatche($routePath, $request, $params);
                 } else {
                     throw new Exception('Middle Wares Failed');
@@ -61,11 +42,11 @@ class Simple
         }
     }
 
-    private static function runMiddleWares(array $middlewares)
+    private static function runMiddleWares(array $middlewares, Router $router, Request $request)
     {
         foreach ($middlewares as $middleware) {
 
-            if (!Dispatcher::dispatche(self::$router->route($middleware, 'middlewares'), self::$request)) {
+            if (!Dispatcher::dispatche($router->route($middleware, 'middlewares'), $request)) {
                 return false;
             }
         }
