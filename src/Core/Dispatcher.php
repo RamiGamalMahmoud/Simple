@@ -2,6 +2,8 @@
 
 namespace Simple\Core;
 
+use Exception;
+use Simple\Helpers\Log;
 
 class Dispatcher
 {
@@ -13,15 +15,15 @@ class Dispatcher
             exit;
         }
 
-        if (is_array($route)) {
-            $_route = $route['route'];
-        } else if (is_string($route)) {
-            $_route = $route;
+        if (is_array($route) && count($route) === 2) {
+            $controller = $route[0];
+            $method = $route[1];
+            $obj = new $controller($request, $params);
+            return call_user_func([$obj, $method], $request);
+        } elseif (is_callable($route)) {
+            return $route($request);
+        } else {
+            throw new Exception('path not existed');
         }
-        $dispatched = explode('@', $_route);
-        $controller = $dispatched[0];
-        $action     = $dispatched[1];
-        $obj        = new $controller($request, $params);
-        return call_user_func([$obj, $action], $request);
     }
 }

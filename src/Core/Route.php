@@ -57,7 +57,7 @@ class Route
      * @param string $route: the route that woll be asigned to the middleware name | example: Namespace\\MiddlewareClassName@method
      * @return void
      */
-    public static function middleware(string $middleware, string $route)
+    public static function middleware(string $middleware, array $route)
     {
         self::$_routes['middlewares'][$middleware] = $route;
     }
