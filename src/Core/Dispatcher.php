@@ -2,12 +2,23 @@
 
 namespace Simple\Core;
 
-use Exception;
-use Simple\Helpers\Log;
 
+/**
+ * Dispatching a route
+ * 
+ * @author rami-gamal <rami.gamal.mahmoud@gmail.com>
+ */
 class Dispatcher
 {
 
+    /**
+     * Call the roue action
+     * 
+     * @param $route
+     * @param \Simple\Core\Request
+     * @return mixed
+     * @throws \Exception
+     */
     public static function dispatche($route, IRequest $request, $params = null)
     {
         if ($route == null) {
@@ -23,7 +34,7 @@ class Dispatcher
         } elseif (is_callable($route)) {
             return $route($request);
         } else {
-            throw new Exception('path not existed');
+            throw new \Exception('path not existed');
         }
     }
 }
