@@ -4,19 +4,31 @@ namespace Simple\Core\DataAccess;
 
 abstract class BaseDataAccess implements IDataAccess
 {
-    protected \PDO $conn;
+    protected static \PDO $conn;
+    protected static $db;
+    protected static $driver;
+    protected static $host;
+    protected static $password;
+    protected static $port;
+    protected static $userName;
 
-    public function __construct(IDBConfig $dBConfig)
+    protected static function getConnectionString(): string
     {
-        $this->connect($dBConfig->getConnectionString(), $dBConfig->getUserName(), $dBConfig->getPassword(), $dBConfig->getOptinos());
+        return self::$driver . ':host=' . self::$host . ';dbname=' . self::$db;
     }
 
-    protected function connect(string $dsn, string $userName, string $password, array $options = [])
+    public static function config(array $config)
     {
-        $this->conn = new \PDO($dsn, $userName, $password, $options);
+        self::$db       = $config['db'];
+        self::$driver   = $config['driver'];
+        self::$host     = $config['host'];
+        self::$password = $config['password'];
+        self::$port     = $config['port'];
+        self::$userName = $config['userName'];
     }
 
-    public abstract function get(\Simple\Core\DataAccess\Query $query);
-    public abstract function getAll(\Simple\Core\DataAccess\Query $query);
-    public abstract function run(\Simple\Core\DataAccess\Query $query);
+    public static function connect(array $options = [])
+    {
+        self::$conn = new \PDO(self::getConnectionString(), self::$userName, self::$password, $options);
+    }
 }

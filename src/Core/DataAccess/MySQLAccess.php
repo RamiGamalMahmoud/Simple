@@ -32,7 +32,7 @@ class MySQLAccess extends BaseDataAccess
 
     private function prepare(string $sql, array $params = null)
     {
-        $stmnt = $this->conn->prepare($sql);
+        $stmnt = self::$conn->prepare($sql);
         $stmnt->execute($params);
         return $stmnt;
     }
