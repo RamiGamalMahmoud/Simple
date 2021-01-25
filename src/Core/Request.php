@@ -7,7 +7,7 @@ class Request implements IRequest
     private $path;
     private $requestMethod;
     private $requestType;
-    private array $urlSegmant;
+    private array $urlSegmants = [];
     private array $body = [];
 
     /**
@@ -37,7 +37,7 @@ class Request implements IRequest
         $path = trim($path, '/');
         if (empty($path)) $path = '/';
 
-        $this->urlSegmant = explode('/', $path);
+        $this->urlSegmants = explode('/', $path);
 
         $this->path = $path;
     }
@@ -56,17 +56,17 @@ class Request implements IRequest
 
     public function getSegment(int $index)
     {
-        $segments = count($this->urlSegmant);
+        $segments = count($this->urlSegmants);
         if ($segments == 0 || $index > $segments) {
             return false;
         }
 
-        return $this->urlSegmant[$index];
+        return $this->urlSegmants[$index];
     }
 
     public function getSegments()
     {
-        return $this->urlSegmant;
+        return $this->urlSegmants;
     }
     /**
      * return the parameters in the request method

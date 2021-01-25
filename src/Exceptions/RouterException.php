@@ -4,7 +4,7 @@ namespace Simple\EXceptions;
 
 use Exception;
 
-class RoutingException extends Exception
+class RouterException extends Exception
 {
     public function __toString()
     {

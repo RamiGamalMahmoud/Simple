@@ -17,12 +17,12 @@ class Dispatcher
      * @param $route
      * @param \Simple\Core\Request
      * @return mixed
-     * @throws \Exception
+     * @throws \Simple\EXceptions\RouterException
      */
     public static function dispatche($route, IRequest $request, $params = null)
     {
         if ($route == null) {
-            throw new \Exception('RouteExecption: Route not existed');
+            throw new \Simple\EXceptions\RouterException('RouteExecption: Route not existed');
             exit;
         }
 
@@ -34,7 +34,7 @@ class Dispatcher
         } elseif (is_callable($route)) {
             return $route($request);
         } else {
-            throw new \Exception('path not existed');
+            throw new \Simple\EXceptions\RouterException('RouteExecption: Route not existed');
         }
     }
 }

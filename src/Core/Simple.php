@@ -3,7 +3,7 @@
 namespace Simple\Core;
 
 use Exception;
-use Simple\Exceptions\RoutingException;
+use Simple\Exceptions\RouterException;
 
 class Simple
 {
@@ -30,15 +30,15 @@ class Simple
             $middlewares = $route['middlewares'];
             if ($middlewares !== null) {
                 if (self::runMiddleWares($middlewares, $router, $request)) {
-                    return Dispatcher::dispatche($routePath, $request, $params);
+                    return Dispatcher::dispatche($routePath, $request, $router);
                 } else {
                     throw new Exception('Middle Wares Failed');
                 }
             } else {
-                return Dispatcher::dispatche($routePath, $request, $params);
+                return Dispatcher::dispatche($routePath, $request, $router);
             }
         } else {
-            throw new RoutingException('Route Not Found');
+            throw new RouterException('Route Not Found');
         }
     }
 
