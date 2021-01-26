@@ -63,16 +63,19 @@ class Router
     {
         $routeParts = explode('/', $route);
         $pathParts = explode('/', $path);
-        $allParts = array_combine($routeParts, $pathParts);
-        $variables = [];
-        foreach ($allParts as $key => $value) {
-            if (preg_match('/\{\w*\}/', $key)) {
-                $key = trim($key, '{');
-                $key = trim($key, '}');
-                $variables[$key] = $value;
+        if (count($routeParts) === count($pathParts)) {
+            $allParts = array_combine($routeParts, $pathParts);
+            $variables = [];
+            foreach ($allParts as $key => $value) {
+                if (preg_match('/\{\w*\}/', $key)) {
+                    $key = trim($key, '{');
+                    $key = trim($key, '}');
+                    $variables[$key] = $value;
+                }
             }
+            return $variables;
         }
-        return $variables;
+        return [];
     }
 
     public function route($path = '', $method = '')
