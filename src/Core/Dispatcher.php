@@ -2,11 +2,13 @@
 
 namespace Simple\Core;
 
+use Exception;
 
 /**
  * Dispatching a route
  * 
  * @author rami-gamal <rami.gamal.mahmoud@gmail.com>
+ * @package Simple
  */
 class Dispatcher
 {
@@ -29,6 +31,11 @@ class Dispatcher
         if (is_array($route) && count($route) === 2) {
             $controller = $route[0];
             $method = $route[1];
+            if (!class_exists($controller)) {
+                throw new \Simple\EXceptions\ControllerNotFoundException();
+            } else if (!method_exists($controller, $method)) {
+                throw new \Simple\EXceptions\MethodNotFoundException();
+            }
             $obj = new $controller($request, $params);
             return call_user_func([$obj, $method], $request);
         } elseif (is_callable($route)) {
