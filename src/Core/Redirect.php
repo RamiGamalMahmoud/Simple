@@ -18,5 +18,6 @@ class Redirect
     public static function to(string $location)
     {
         header('location: ' . $location);
+        exit;
     }
 }
