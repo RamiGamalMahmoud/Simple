@@ -27,7 +27,7 @@ class Request implements IRequest
      */
     private function parsePath(string $path = null)
     {
-        $path = $path ?? trim($_SERVER['REQUEST_URI'], '/');
+        $path = $path ?? trim($_SERVER['QUERY_STRING'], '/');
 
         $pos = strpos($path, '?');
         if ($pos !== false) {
