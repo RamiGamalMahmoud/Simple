@@ -2,22 +2,24 @@
 
 namespace Simple\Core;
 
-use Exception;
-
 class Router
 {
     private array $routes = [];
+
     private $path;
+
     private $method;
-    private IRequest $request;
+
+    private Request $request;
+
     private array $routeVariables;
 
-    public function __construct(IRequest $request, string $configDir)
+    public function __construct(Request $request, string $routesDirectory)
     {
         $this->request = $request;
         $this->path = $this->request->getPath();
         $this->method = $this->request->getRequestMethod();
-        include $this->getRoutesFile($configDir);
+        include $this->getRoutesFile($routesDirectory);
         $this->routes = Route::getRoutes();
     }
 
@@ -26,10 +28,10 @@ class Router
         return $this->routes;
     }
 
-    public function getRoutesFile(string $configDir)
+    public function getRoutesFile(string $routesDirectory)
     {
         $requestType = $this->request->getRequestType();
-        return $configDir . DIRECTORY_SEPARATOR . $requestType . '.php';
+        return $routesDirectory . DIRECTORY_SEPARATOR . $requestType . '.php';
     }
 
     private function pathToRegex($path)
