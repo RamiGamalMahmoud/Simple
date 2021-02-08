@@ -2,24 +2,36 @@
 
 namespace Simple\Core;
 
+use Simple\EXceptions\RouterException;
+
 class Router
 {
     private array $routes = [];
 
     private $path;
 
-    private $method;
+    private $requestMethod;
 
-    private Request $request;
+    private string $requestType;
 
     private array $routeVariables;
 
-    public function __construct(Request $request, string $routesDirectory)
+    private static string $routesDirectory;
+
+    public static function setRoutesDirectory(string $routesDirectory)
     {
-        $this->request = $request;
-        $this->path = $this->request->getPath();
-        $this->method = $this->request->getRequestMethod();
-        include $this->getRoutesFile($routesDirectory);
+        self::$routesDirectory = $routesDirectory;
+    }
+
+    public function __construct(
+        string $requestMethod,
+        string $requestType,
+        string $path
+    ) {
+        $this->path = $path;
+        $this->requestMethod = $requestMethod;
+        $this->requestType = $requestType;
+        $this->loadRoutesFile(self::$routesDirectory);
         $this->routes = Route::getRoutes();
     }
 
@@ -28,10 +40,9 @@ class Router
         return $this->routes;
     }
 
-    public function getRoutesFile(string $routesDirectory)
+    public function loadRoutesFile(string $routesDirectory)
     {
-        $requestType = $this->request->getRequestType();
-        return $routesDirectory . DIRECTORY_SEPARATOR . $requestType . '.php';
+        include $routesDirectory . DIRECTORY_SEPARATOR . $this->requestType . '.php';
     }
 
     private function pathToRegex($path)
@@ -80,12 +91,12 @@ class Router
         return [];
     }
 
-    public function route($path = '', $method = '')
+    public function resolve($path = '', $method = '')
     {
         $_path = $path;
         $_method = $method;
         $_path = empty($_path) ? $this->path : $_path;
-        $_method = empty($_method) ? $this->method : $_method;
+        $_method = empty($_method) ? $this->requestMethod : $_method;
 
         foreach ($this->routes[$_method] as $key => $value) {
             $regPath = $this->pathToRegex($key);
@@ -94,7 +105,7 @@ class Router
                 return $value;
             }
         }
-        return false;
+        throw new RouterException();
     }
 
     public function get(string $key)
