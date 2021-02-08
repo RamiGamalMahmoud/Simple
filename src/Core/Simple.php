@@ -3,6 +3,7 @@
 namespace Simple\Core;
 
 use Exception;
+use Simple\EXceptions\MiddleWareException;
 use Simple\Exceptions\RouterException;
 
 class Simple
@@ -28,26 +29,19 @@ class Simple
         if ($route) {
             $routePath = $route['route'];
             $middlewares = $route['middlewares'];
-            if ($middlewares !== null) {
-                if (self::runMiddleWares($middlewares, $router, $request)) {
-                    return Dispatcher::dispatche($routePath, $request, $router);
-                } else {
-                    throw new Exception('Middle Wares Failed');
-                }
-            } else {
-                return Dispatcher::dispatche($routePath, $request, $router);
-            }
+            self::runMiddleWares($middlewares, $router, $request);
+            return Dispatcher::dispatche($routePath, $request, $router, $params);
         } else {
             throw new RouterException('Route Not Found');
         }
     }
 
-    private static function runMiddleWares(array $middlewares, Router $router, Request $request)
+    private static function runMiddleWares(?array $middlewares, Router $router, Request $request)
     {
         foreach ($middlewares as $middleware) {
 
             if (!Dispatcher::dispatche($router->route($middleware, 'middlewares'), $request)) {
-                return false;
+                throw new MiddleWareException();
             }
         }
 
