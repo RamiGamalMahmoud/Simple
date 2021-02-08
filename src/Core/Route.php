@@ -13,7 +13,7 @@ class Route
      */
     private static array $_routes = [];
 
-    private static function checkMiddleWare($middleware)
+    private static function checkMiddleware($middleware)
     {
         return $middleware === null ? [] : $middleware;
     }
@@ -29,7 +29,7 @@ class Route
      */
     private static function add(string $method, string $path, $action,  $middleWares)
     {
-        self::$_routes[$method][$path] = ['route' => $action, 'middlewares' => self::checkMiddleWare($middleWares)];
+        self::$_routes[$method][$path] = ['route' => $action, 'middlewares' => self::checkMiddleware($middleWares)];
     }
 
     /**
@@ -41,7 +41,7 @@ class Route
      */
     public static function get(string $path, $action, $middleWares = null)
     {
-        self::add('get', $path, $action, self::checkMiddleWare($middleWares));
+        self::add('get', $path, $action, self::checkMiddleware($middleWares));
     }
 
     /**
@@ -53,7 +53,7 @@ class Route
      */
     public static function post(string $path, $action, $middleWares = null)
     {
-        self::add('post', $path, $action, self::checkMiddleWare($middleWares));
+        self::add('post', $path, $action, self::checkMiddleware($middleWares));
     }
 
     /**
