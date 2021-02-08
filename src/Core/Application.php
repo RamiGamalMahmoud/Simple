@@ -2,49 +2,84 @@
 
 namespace Simple\Core;
 
-use Exception;
-use Simple\EXceptions\MiddleWareException;
-use Simple\Exceptions\RouterException;
+use Simple\Core\Router;
 
-class Simple
+use Simple\Core\Request;
+use Simple\Core\IErrorHandler;
+use Simple\EXceptions\AuthorizationException;
+use Simple\EXceptions\ControllerNotFoundException;
+use Simple\EXceptions\MethodNotFoundException;
+use Simple\EXceptions\RouterException;
+
+class Application
 {
-    private static string $configDir;
+    private static Request $currentRequest;
 
-    public static function init(string $configDir)
+    private static Router $currentRouter;
+
+    private static IErrorHandler $errorHandler;
+
+    public static function init(IErrorHandler $errorHandler)
     {
-        self::$configDir = $configDir;
+        self::$errorHandler = $errorHandler;
     }
 
-    public static function run()
+    public static function run(bool $catchExceptions = true)
     {
-        self::resolve();
+        if (!$catchExceptions) {
+            self::start();
+        } else {
+            try {
+                self::start();
+            } catch (RouterException $exception) {
+                self::$errorHandler->pageNotFound();
+            } catch (AuthorizationException $exception) {
+                self::$errorHandler->authorizationError();
+            } catch (ControllerNotFoundException $exception) {
+                self::$errorHandler->pageNotFound();
+            } catch (MethodNotFoundException $exception) {
+                self::$errorHandler->pageNotFound();
+            }
+        }
     }
 
-    public static function resolve(string $path = null, array $params = null)
+    public static function start(string $path = null, array $params = null)
     {
         $request = new Request($path);
-        $router = new Router($request, self::$configDir);
-        $route = $router->route();
+        $router = new Router(
+            $request->getRequestMethod(),
+            $request->getRequestType(),
+            $request->getPath()
+        );
 
-        if ($route) {
-            $routePath = $route['route'];
-            $middlewares = $route['middlewares'];
-            self::runMiddleWares($middlewares, $router, $request);
-            return Dispatcher::dispatche($routePath, $request, $router, $params);
-        } else {
-            throw new RouterException('Route Not Found');
-        }
+        self::$currentRequest = $request;
+        self::$currentRouter = $router;
+
+        $route = $router->resolve();
+
+        $routePath = $route['route'];
+        $middlewares = $route['middlewares'];
+
+        self::runMiddleWares($middlewares, $router, $request);
+        return Dispatcher::dispatche($routePath, $request, $router, $params);
+    }
+
+    public static function getCurrentRequest(): Request
+    {
+        return self::$currentRequest;
+    }
+
+    public static function getCurrentRouter(): Router
+    {
+        return self::$currentRouter;
     }
 
     private static function runMiddleWares(?array $middlewares, Router $router, Request $request)
     {
+        if ($middlewares === null) return;
+
         foreach ($middlewares as $middleware) {
-
-            if (!Dispatcher::dispatche($router->route($middleware, 'middlewares'), $request)) {
-                throw new MiddleWareException();
-            }
+            Dispatcher::dispatche($router->resolve($middleware, 'middlewares'), $request);
         }
-
-        return true;
     }
 }
