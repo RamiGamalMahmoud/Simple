@@ -13,6 +13,11 @@ class Route
      */
     private static array $_routes = [];
 
+    private static function checkMiddleWare($middleware)
+    {
+        return $middleware === null ? [] : $middleware;
+    }
+
     /**
      * Add the route to routes table
      * @param string $method: The http method
@@ -24,7 +29,7 @@ class Route
      */
     private static function add(string $method, string $path, $action,  $middleWares)
     {
-        self::$_routes[$method][$path] = ['route' => $action, 'middlewares' => $middleWares];
+        self::$_routes[$method][$path] = ['route' => $action, 'middlewares' => self::checkMiddleWare($middleWares)];
     }
 
     /**
@@ -36,7 +41,7 @@ class Route
      */
     public static function get(string $path, $action, $middleWares = null)
     {
-        self::add('get', $path, $action, $middleWares);
+        self::add('get', $path, $action, self::checkMiddleWare($middleWares));
     }
 
     /**
@@ -48,7 +53,7 @@ class Route
      */
     public static function post(string $path, $action, $middleWares = null)
     {
-        self::add('post', $path, $action, $middleWares);
+        self::add('post', $path, $action, self::checkMiddleWare($middleWares));
     }
 
     /**
