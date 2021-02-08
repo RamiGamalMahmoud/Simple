@@ -23,11 +23,6 @@ class Dispatcher
      */
     public static function dispatche($route, IRequest $request, $params = null)
     {
-        if ($route == null) {
-            throw new \Simple\EXceptions\RouterException('RouteExecption: Route not existed');
-            exit;
-        }
-
         if (is_array($route) && count($route) === 2) {
             $controller = $route[0];
             $method = $route[1];
