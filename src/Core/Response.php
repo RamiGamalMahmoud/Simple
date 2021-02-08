@@ -12,7 +12,7 @@ class Response
      * @param int status
      * @return string the encoded json string
      */
-    public static function json(array $data, int $status)
+    public static function json($data, int $status)
     {
         $json = json_encode($data);
         header('Content-Type: application/json');
