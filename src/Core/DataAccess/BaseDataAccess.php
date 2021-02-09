@@ -5,11 +5,17 @@ namespace Simple\Core\DataAccess;
 abstract class BaseDataAccess implements IDataAccess
 {
     protected static \PDO $conn;
+
     protected static $db;
+
     protected static $driver;
+
     protected static $host;
+
     protected static $password;
+
     protected static $port;
+
     protected static $userName;
 
     protected static function getConnectionString(): string
@@ -29,6 +35,8 @@ abstract class BaseDataAccess implements IDataAccess
 
     public static function connect(array $options = [])
     {
-        self::$conn = new \PDO(self::getConnectionString(), self::$userName, self::$password, $options);
+        if (!isset(self::$conn)) {
+            self::$conn = new \PDO(self::getConnectionString(), self::$userName, self::$password, $options);
+        }
     }
 }
