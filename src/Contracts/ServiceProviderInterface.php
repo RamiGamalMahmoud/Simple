@@ -1,6 +1,6 @@
 <?php
 
-namespace Simple\Core\Container;
+namespace Simple\Contracts;
 
 interface ServiceProviderInterface
 {
