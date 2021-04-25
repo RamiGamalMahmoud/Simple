@@ -4,22 +4,44 @@ namespace Simple\Helpers;
 
 class Log
 {
+    private static string $style = '<style>
+    .exported{
+        direction: ltr;
+        font-weight: bold;
+        font-size: 1.2em;
+        line-height: 2em;
+        box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+        border-radius: 5px;
+        direction: ltr;
+        background-color: #EEE;
+        padding: 20px;
+        margin: 10px;
+        box-sizing: border-box;
+        word-wrap: break-word;
+        overflow: auto;
+    }
+    </style>';
+
+    private static function getDubpedText($object)
+    {
+        $text = self::$style;
+        $text .= '<div class="exported container">';
+        $text .= '<pre>';
+        $text .= var_export($object, true);
+        $text .= '</pre>';
+        $text .= '</div>';
+        return $text;
+    }
+
     public static function dump($object)
     {
-        echo '<style>pre{
-            font-weight: bold;
-            font-size: 1.5em;
-            line-height: 2em;
-            color: brown;
-            direction: ltr;
-            background-color: #EEE;
-            padding: 20px;
-            width: fit-content;
-            box-sizing: border-box;
-        }</style>';
-        echo '<pre>';
-        var_export($object);
-        echo '</pre>';
+        echo self::getDubpedText($object);
+        exit;
+    }
+
+    public static function print($object)
+    {
+        echo self::getDubpedText($object);
     }
 
     public static function toCammel($str)
