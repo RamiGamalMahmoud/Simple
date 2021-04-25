@@ -9,12 +9,17 @@ class Request implements IRequest
     private $requestType;
     private array $urlSegmants = [];
     private array $body = [];
+    private bool $isRefreshed;
 
     /**
      * construct the object
      */
     public function __construct($path = null)
     {
+        $this->isRefreshed = isset(
+            $_SERVER['HTTP_CACHE_CONTROL']
+        ) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0';
+
         $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $this->parsePath($path);
         $this->requestType = $this->parseRequestType();
@@ -27,8 +32,7 @@ class Request implements IRequest
      */
     private function parsePath(string $path = null)
     {
-        $path = $path ?? trim($_SERVER['QUERY_STRING'], '/');
-
+        $path = $path ?? trim($_SERVER['REQUEST_URI'], '/');
         $pos = strpos($path, '?');
         if ($pos !== false) {
             $path = substr($path, 0, $pos);
@@ -68,6 +72,15 @@ class Request implements IRequest
     {
         return $this->urlSegmants;
     }
+
+    public function input(string $key)
+    {
+        $inputs = $this->getRequestBody()[$this->getRequestMethod()];
+        if (isset($inputs[$key])) {
+            return $inputs[$key];
+        }
+        return null;
+    }
     /**
      * return the parameters in the request method
      * @param void
@@ -84,11 +97,20 @@ class Request implements IRequest
             }
         } elseif ($this->requestMethod === 'post') {
             foreach ($_POST as $key => $value) {
-                $this->body[$this->requestMethod][$key] = filter_input(
-                    INPUT_POST,
-                    $key,
-                    FILTER_SANITIZE_SPECIAL_CHARS
-                );
+                if (is_array($value)) {
+                    foreach ($value as $k => $v) {
+                        $this->body[$this->requestMethod][$key][$k] = filter_var(
+                            $v,
+                            FILTER_SANITIZE_SPECIAL_CHARS
+                        );
+                    }
+                } else {
+                    $this->body[$this->requestMethod][$key] = filter_input(
+                        INPUT_POST,
+                        $key,
+                        FILTER_SANITIZE_SPECIAL_CHARS
+                    );
+                }
             }
         }
 
