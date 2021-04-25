@@ -33,6 +33,17 @@ class Query
         return $this;
     }
 
+    public function call($proc, array $params = [])
+    {
+        $this->queryString = "CALL $proc(";
+        if ($params !== null && !empty($params)) {
+            $this->queryString .= implode(', ', array_map(function () {
+                return '?';
+            }, $params)) . ')';
+            $this->queryParams = $params;
+        }
+    }
+
     public function selectCount(string $column)
     {
         $this->queryString = "SELECT count($column) AS count ";
