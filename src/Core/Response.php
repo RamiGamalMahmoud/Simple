@@ -19,4 +19,10 @@ class Response
         http_response_code($status);
         echo $json;
     }
+
+    public static function send($text, int $status)
+    {
+        http_response_code($status);
+        echo $text;
+    }
 }

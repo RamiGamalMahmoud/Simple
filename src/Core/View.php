@@ -24,10 +24,10 @@ class View
      */
     private static array $context = [];
 
-    public static function init(string $viewsPath, string $compilePath, bool $viewsAutoReload = false)
+    public static function init(string $viewsPath, string $compilePath, bool $isAutoReload = false)
     {
         self::$loader = new \Twig\Loader\FilesystemLoader($viewsPath);
-        self::$twig = new \Twig\Environment(self::$loader, ['cache' => $compilePath, 'auto_reload' => $viewsAutoReload]);
+        self::$twig = new \Twig\Environment(self::$loader, ['cache' => $compilePath, 'auto_reload' => $isAutoReload]);
         self::$twig->addExtension(new \Twig\Extension\StringLoaderExtension());
     }
 

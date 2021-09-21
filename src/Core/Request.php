@@ -2,33 +2,64 @@
 
 namespace Simple\Core;
 
-class Request implements IRequest
+use Simple\Contracts\RequestInterface;
+
+class Request implements RequestInterface
 {
+    /**
+     * Requested path
+     * 
+     * @var string|null $path
+     */
     private $path;
-    private $requestMethod;
-    private $requestType;
-    private array $urlSegmants = [];
-    private array $body = [];
 
     /**
-     * construct the object
+     * @var string $requestMethod
      */
+    private $requestMethod;
+
+    /**
+     * The request type 
+     * 
+     * @var string $requestType
+     */
+    private $requestType;
+
+    /**
+     * @var array $urlSegmants
+     */
+    private array $urlSegmants = [];
+
+    /**
+     * @var array $requestBody
+     */
+    private array $requestBody = [];
+
+    /**
+     * @var bool $isRefreshed
+     */
+    private bool $isRefreshed;
+
     public function __construct($path = null)
     {
+        $this->isRefreshed = isset(
+            $_SERVER['HTTP_CACHE_CONTROL']
+        ) && $_SERVER['HTTP_CACHE_CONTROL'] === 'max-age=0';
+
         $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
         $this->parsePath($path);
         $this->requestType = $this->parseRequestType();
     }
 
     /**
-     * func parsePath: take the path
-     * @param string $path: the path to be parsed
+     * Parses the requested path
+     * 
+     * @param string|null $path: the path to be parsed
      * @return void
      */
     private function parsePath(string $path = null)
     {
-        $path = $path ?? trim($_SERVER['QUERY_STRING'], '/');
-
+        $path = $path ?? trim($_SERVER['REQUEST_URI'], '/');
         $pos = strpos($path, '?');
         if ($pos !== false) {
             $path = substr($path, 0, $pos);
@@ -68,6 +99,15 @@ class Request implements IRequest
     {
         return $this->urlSegmants;
     }
+
+    public function input(string $key)
+    {
+        $inputs = $this->getRequestBody()[$this->getRequestMethod()];
+        if (isset($inputs[$key])) {
+            return $inputs[$key];
+        }
+        return null;
+    }
     /**
      * return the parameters in the request method
      * @param void
@@ -76,7 +116,7 @@ class Request implements IRequest
     {
         if ($this->requestMethod === 'get') {
             foreach ($_GET as $key => $value) {
-                $this->body[$this->requestMethod][$key] = filter_input(
+                $this->requestBody[$this->requestMethod][$key] = filter_input(
                     INPUT_GET,
                     $key,
                     FILTER_SANITIZE_SPECIAL_CHARS
@@ -84,15 +124,24 @@ class Request implements IRequest
             }
         } elseif ($this->requestMethod === 'post') {
             foreach ($_POST as $key => $value) {
-                $this->body[$this->requestMethod][$key] = filter_input(
-                    INPUT_POST,
-                    $key,
-                    FILTER_SANITIZE_SPECIAL_CHARS
-                );
+                if (is_array($value)) {
+                    foreach ($value as $k => $v) {
+                        $this->requestBody[$this->requestMethod][$key][$k] = filter_var(
+                            $v,
+                            FILTER_SANITIZE_SPECIAL_CHARS
+                        );
+                    }
+                } else {
+                    $this->requestBody[$this->requestMethod][$key] = filter_input(
+                        INPUT_POST,
+                        $key,
+                        FILTER_SANITIZE_SPECIAL_CHARS
+                    );
+                }
             }
         }
 
-        return $this->body;
+        return $this->requestBody;
     }
 
     public function getAjaxData()
@@ -109,6 +158,6 @@ class Request implements IRequest
 
     public function getRequestMethod()
     {
-        return strtolower($this->requestMethod);
+        return $this->requestMethod;
     }
 }

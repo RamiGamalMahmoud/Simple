@@ -1,8 +1,8 @@
 <?php
 
-namespace Simple\Core;
+namespace Simple\Contracts;
 
-interface IErrorHandler
+interface ErrorHandlerInterface
 {
     public function internalError();
     public function pageNotFound();

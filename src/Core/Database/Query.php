@@ -1,18 +1,15 @@
 <?php
 
-namespace Simple\Core\DataAccess;
+namespace Simple\Core\Database;
 
 class Query
 {
-    // SELECT [columns] FROM [table] 
-    // DELETE FROM [table] WHERE condition
-    // UPDATE table SET col=value, col-2=value-2, ..... WHERE condition
-    // INSERT INTO [table] (columnd) VALUES (values);
-
     private string $queryString = '';
+
     private array $queryParams = [];
 
     public const ASC = 'ASC';
+
     public const DESC = 'DESC';
 
     public function getQueryString()
@@ -74,8 +71,6 @@ class Query
         return $this;
     }
 
-    // INSERT INTO $tableName (columns) VALUES (valuea);
-    // insert
     public function insertInto(string $tableName)
     {
         $this->queryString = "INSERT INTO $tableName ";
@@ -98,7 +93,6 @@ class Query
         return $this;
     }
 
-    // update
     public function update(string $tableName)
     {
         $this->queryString = "UPDATE $tableName ";
@@ -117,7 +111,6 @@ class Query
         $this->queryString .= ' ';
         return $this;
     }
-    // join
 
     private function makeJoin(string $joinType, string $tableName)
     {

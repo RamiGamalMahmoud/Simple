@@ -1,10 +1,9 @@
 <?php
 
-namespace Simple\Core;
+namespace Simple\Contracts;
 
-interface IRequest
+interface RequestInterface
 {
-    function __construct($parh = '');
     function getSegment(int $index);
     function getSegments();
     function getRequestBody();

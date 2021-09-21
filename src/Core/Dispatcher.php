@@ -2,7 +2,8 @@
 
 namespace Simple\Core;
 
-use Exception;
+use ReflectionMethod;
+use Simple\Contracts\RequestInterface;
 
 /**
  * Dispatching a route
@@ -16,27 +17,38 @@ class Dispatcher
     /**
      * Call the roue action
      * 
-     * @param $route
-     * @param \Simple\Core\Request
+     * @param array $route
+     * @param \Simple\Contracts\RequestInterface
+     * 
      * @return mixed
      * @throws \Simple\EXceptions\RouterException
      */
-    public static function dispatche($route, IRequest $request, $params = null)
+    public static function dispatche($route, RequestInterface $request)
     {
         if (is_array($route) && count($route) === 2) {
-            $controller = $route[0];
+            $controllerName = $route[0];
+
             $method = $route[1];
-            if (!class_exists($controller)) {
+
+            if (!class_exists($controllerName)) {
                 throw new \Simple\EXceptions\ControllerNotFoundException();
-            } else if (!method_exists($controller, $method)) {
+            } else if (!method_exists($controllerName, $method)) {
                 throw new \Simple\EXceptions\MethodNotFoundException();
             }
-            $obj = new $controller($request, $params);
-            return call_user_func([$obj, $method], $request);
+
+            $controller = self::startContainer($controllerName);
+
+            return call_user_func([$controller, $method], $request);
         } elseif (is_callable($route)) {
             return $route($request);
         } else {
             throw new \Simple\EXceptions\RouterException('RouteExecption: Route not existed');
         }
+    }
+
+    private static function startContainer(string $controllerName)
+    {
+        $container = app()->getContainer();
+        return $container->resolve($controllerName);
     }
 }
