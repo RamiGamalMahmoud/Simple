@@ -2,18 +2,44 @@
 
 namespace Simple\Core;
 
-class Request implements IRequest
+use Simple\Contracts\RequestInterface;
+
+class Request implements RequestInterface
 {
+    /**
+     * Requested path
+     * 
+     * @var string|null $path
+     */
     private $path;
-    private $requestMethod;
-    private $requestType;
-    private array $urlSegmants = [];
-    private array $body = [];
-    private bool $isRefreshed;
 
     /**
-     * construct the object
+     * @var string $requestMethod
      */
+    private $requestMethod;
+
+    /**
+     * The request type 
+     * 
+     * @var string $requestType
+     */
+    private $requestType;
+
+    /**
+     * @var array $urlSegmants
+     */
+    private array $urlSegmants = [];
+
+    /**
+     * @var array $requestBody
+     */
+    private array $requestBody = [];
+
+    /**
+     * @var bool $isRefreshed
+     */
+    private bool $isRefreshed;
+
     public function __construct($path = null)
     {
         $this->isRefreshed = isset(
@@ -26,8 +52,9 @@ class Request implements IRequest
     }
 
     /**
-     * func parsePath: take the path
-     * @param string $path: the path to be parsed
+     * Parses the requested path
+     * 
+     * @param string|null $path: the path to be parsed
      * @return void
      */
     private function parsePath(string $path = null)
@@ -89,7 +116,7 @@ class Request implements IRequest
     {
         if ($this->requestMethod === 'get') {
             foreach ($_GET as $key => $value) {
-                $this->body[$this->requestMethod][$key] = filter_input(
+                $this->requestBody[$this->requestMethod][$key] = filter_input(
                     INPUT_GET,
                     $key,
                     FILTER_SANITIZE_SPECIAL_CHARS
@@ -99,13 +126,13 @@ class Request implements IRequest
             foreach ($_POST as $key => $value) {
                 if (is_array($value)) {
                     foreach ($value as $k => $v) {
-                        $this->body[$this->requestMethod][$key][$k] = filter_var(
+                        $this->requestBody[$this->requestMethod][$key][$k] = filter_var(
                             $v,
                             FILTER_SANITIZE_SPECIAL_CHARS
                         );
                     }
                 } else {
-                    $this->body[$this->requestMethod][$key] = filter_input(
+                    $this->requestBody[$this->requestMethod][$key] = filter_input(
                         INPUT_POST,
                         $key,
                         FILTER_SANITIZE_SPECIAL_CHARS
@@ -114,7 +141,7 @@ class Request implements IRequest
             }
         }
 
-        return $this->body;
+        return $this->requestBody;
     }
 
     public function getAjaxData()
@@ -131,6 +158,6 @@ class Request implements IRequest
 
     public function getRequestMethod()
     {
-        return strtolower($this->requestMethod);
+        return $this->requestMethod;
     }
 }

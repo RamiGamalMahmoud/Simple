@@ -3,14 +3,13 @@
 use Simple\Core\Application;
 use Simple\Core\Request;
 use Simple\Core\Router;
-use Simple\Helpers\Config;
 use Simple\Helpers\Log;
 
 if (!function_exists('config')) {
 
     function config(string $key)
     {
-        return Config::get($key);
+        return app()->configrations()->get($key);
     }
 }
 
